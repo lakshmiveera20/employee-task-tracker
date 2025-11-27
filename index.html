@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Employee Task Tracker — ProU</title>
+
+<style>
+/* =========================================
+   GLOBAL THEME (Professional SaaS UI)
+========================================= */
+:root {
+  --bg: #f3f6fc;
+  --header-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+  --card-bg: #ffffff;
+
+  --primary: #2563eb;
+  --primary-light: #dbeafe;
+
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e1e5ec;
+
+  --pending: #d97706;
+  --pending-bg: #fff7e6;
+
+  --progress: #0284c7;
+  --progress-bg: #e0f2fe;
+
+  --completed: #16a34a;
+  --completed-bg: #dcfce7;
+
+  --radius: 14px;
+  --shadow: 0 6px 22px rgba(0,0,0,0.08);
+  --soft-shadow: 0 4px 12px rgba(0,0,0,0.05);
+
+  font-family: "Inter", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* =========================================
+   HEADER
+========================================= */
+.header {
+  background: var(--header-bg);
+  padding: 18px 26px;
+  box-shadow: var(--soft-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.header-left h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.header-left .sub {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.input {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-size: 14px;
+  width: 250px;
+  background: white;
+}
+
+/* FILTER CHIPS */
+.chip {
+  padding: 8px 14px;
+  font-size: 13px;
+  border: 1px solid var(--border);
+  background: #eef2f6;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.chip:hover {
+  background: #e2e8f0;
+}
+.chip.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* =========================================
+   PAGE LAYOUT
+========================================= */
+.main-container {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  padding: 24px;
+}
+
+/* =========================================
+   SIDEBAR
+========================================= */
+.sidebar {
+  background: var(--sidebar-bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  position: sticky;
+  height: fit-content;
+  top: 100px;
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.stat-box {
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--primary-light);
+  text-align: center;
+  font-weight: 600;
+}
+
+.stat-num {
+  font-size: 22px;
+  color: var(--primary);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========================================
+   EMPLOYEE CARDS
+========================================= */
+.employee {
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 14px;
+  transition: 0.2s;
+  background: white;
+}
+.employee:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.avatar {
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: var(--radius);
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+/* =========================================
+   TASK LIST
+========================================= */
+.task-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.task {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.task .row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-title {
+  font-weight: 600;
+}
+
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.pending { background: var(--pending-bg); color: var(--pending); }
+.inprogress { background: var(--progress-bg); color: var(--progress); }
+.completed { background: var(--completed-bg); color: var(--completed); }
+
+.delete-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #ef4444;
+  transition: 0.2s;
+}
+.delete-btn:hover {
+  transform: scale(1.2);
+  opacity: 0.7;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--primary);
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.2s;
+}
+.btn:hover {
+  opacity: 0.85;
+}
+
+</style>
+</head>
+
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <h1>ProU — Employee Task Tracker</h1>
+    <div class="sub">Modern dashboard interface (HTML + CSS + JS)</div>
+  </div>
+
+  <div class="header-right">
+    <input id="search" class="input" placeholder="Search employees or tasks…">
+    <div id="filterRow" style="display:flex;gap:6px;"></div>
+  </div>
+</header>
+
+<div class="main-container">
+
+  <aside class="sidebar">
+    <h3>Dashboard Overview</h3>
+    <div class="stat-grid" id="dashboard"></div>
+
+    <h3 style="margin-top:20px;">Add New Task</h3>
+    <select id="employeeSelect" class="input"></select>
+    <input id="taskTitle" class="input" placeholder="Task title">
+    <select id="taskStatus" class="input">
+      <option>Pending</option>
+      <option>In Progress</option>
+      <option>Completed</option>
+    </select>
+    <button id="addBtn" class="btn" style="margin-top:10px;">Add Task</button>
+  </aside>
+
+  <section id="listContainer"></section>
+
+</div>
+
+<script>
+/* =========================================
+   DEFAULT DATA
+========================================= */
+const MOCK = {
+  employees: [
+    { id:1, name:"Alice Johnson", role:"Frontend Developer", tasks:[
+      {id:101,title:"Build login page",status:"Completed"},
+      {id:102,title:"Implement dashboard",status:"In Progress"} ] },
+    { id:2, name:"Bob Smith", role:"Backend Developer", tasks:[
+      {id:103,title:"API integration",status:"Pending"} ] },
+    { id:3, name:"Clara Li", role:"UX Designer", tasks:[
+      {id:104,title:"Design onboarding screens",status:"In Progress"} ] },
+    { id:4, name:"David Patel", role:"QA Engineer", tasks:[
+      {id:105,title:"Write e2e tests",status:"Pending"} ] },
+  ]
+};
+
+/* =========================================
+   GLOBAL STATE + LOCAL STORAGE
+========================================= */
+let state = {
+  employees: [],
+  filter: "All",
+  search: ""
+};
+
+function saveState(){
+  localStorage.setItem("taskTrackerData", JSON.stringify(state.employees));
+}
+
+function loadState(){
+  const data = localStorage.getItem("taskTrackerData");
+  if(data){
+    state.employees = JSON.parse(data);
+  } else {
+    state.employees = JSON.parse(JSON.stringify(MOCK.employees));
+  }
+}
+
+const avatarLetters=name=>name.split(" ").map(a=>a[0]).join("");
+const statusClass=s=>s==="Pending"?"pending":s==="In Progress"?"inprogress":"completed";
+
+/* =========================================
+   DELETE TASK
+========================================= */
+function deleteTask(employeeId, taskId){
+  if(!confirm("Delete this task?")) return;
+
+  const emp = state.employees.find(e=>e.id===employeeId);
+  emp.tasks = emp.tasks.filter(t=>t.id!==taskId);
+
+  saveState();
+  renderAll();
+}
+
+/* =========================================
+   DASHBOARD
+========================================= */
+function renderDashboard(){
+  const dash=document.getElementById("dashboard");
+  dash.innerHTML="";
+
+  const tasks=state.employees.flatMap(e=>e.tasks);
+
+  const counts={
+    Pending: tasks.filter(t=>t.status==="Pending").length,
+    "In Progress": tasks.filter(t=>t.status==="In Progress").length,
+    Completed: tasks.filter(t=>t.status==="Completed").length
+  };
+
+  const items=[
+    {label:"Total",num:tasks.length},
+    {label:"Completed",num:counts.Completed},
+    {label:"Pending",num:counts.Pending},
+    {label:"In Progress",num:counts["In Progress"]}
+  ];
+
+  items.forEach(i=>{
+    dash.innerHTML+=`
+      <div class="stat-box">
+        <div class="stat-num">${i.num}</div>
+        <div class="stat-label">${i.label}</div>
+      </div>
+    `;
+  });
+}
+
+/* =========================================
+   FILTERS
+========================================= */
+function renderFilters(){
+  const filters=["All","Pending","In Progress","Completed"];
+  const row=document.getElementById("filterRow");
+  row.innerHTML="";
+
+  filters.forEach(f=>{
+    const chip=document.createElement("div");
+    chip.className="chip "+(state.filter===f?"active":"");
+    chip.innerText=f;
+    chip.onclick=()=>{state.filter=f; renderAll();};
+    row.appendChild(chip);
+  });
+}
+
+/* =========================================
+   EMPLOYEE SELECT
+========================================= */
+function renderEmployeeSelect(){
+  const sel=document.getElementById("employeeSelect");
+  sel.innerHTML="";
+  state.employees.forEach(e=>{
+    sel.innerHTML+=`<option value="${e.id}">${e.name} — ${e.role}</option>`;
+  });
+}
+
+/* =========================================
+   LIST
+========================================= */
+function renderList(){
+  const list=document.getElementById("listContainer");
+  list.innerHTML="";
+
+  const q=state.search.toLowerCase();
+
+  const filtered = state.employees.map(emp=>({
+    ...emp,
+    tasks: emp.tasks.filter(t=>{
+      const matchSearch=emp.name.toLowerCase().includes(q) ||
+                        t.title.toLowerCase().includes(q);
+      const matchFilter=state.filter==="All" || t.status===state.filter;
+      return matchSearch && matchFilter;
+    })
+  })).filter(e=>e.tasks.length>0);
+
+  filtered.forEach(emp=>{
+    list.innerHTML+=`
+      <div class="employee">
+        <div class="avatar">${avatarLetters(emp.name)}</div>
+        <div style="flex:1;">
+          <div style="display:flex;justify-content:space-between;">
+            <div>
+              <strong>${emp.name}</strong>
+              <div style="font-size:12px;color:var(--muted);">${emp.role}</div>
+            </div>
+            <div style="color:var(--muted);font-size:12px;">${emp.tasks.length} tasks</div>
+          </div>
+
+          <div class="task-list">
+            ${emp.tasks.map(t=>`
+              <div class="task">
+                <div class="row">
+                  <div>
+                    <div class="task-title">${t.title}</div>
+                    <span class="badge ${statusClass(t.status)}">${t.status}</span>
+                  </div>
+                  <button class="delete-btn" onclick="deleteTask(${emp.id},${t.id})">🗑️</button>
+                </div>
+              </div>
+            `).join("")}
+          </div>
+
+        </div>
+      </div>
+    `;
+  });
+}
+
+/* =========================================
+   ADD TASK
+========================================= */
+document.getElementById("addBtn").onclick=()=>{
+  const id=document.getElementById("employeeSelect").value;
+  const title=document.getElementById("taskTitle").value.trim();
+  const status=document.getElementById("taskStatus").value;
+
+  if(!title) return alert("Enter task title.");
+
+  const emp=state.employees.find(e=>e.id==id);
+  emp.tasks.push({id:Date.now(),title,status});
+
+  saveState();
+  document.getElementById("taskTitle").value="";
+  renderAll();
+};
+
+/* =========================================
+   SEARCH
+========================================= */
+document.getElementById("search").oninput=function(){
+  state.search=this.value;
+  renderAll();
+};
+
+/* =========================================
+   MAIN RENDER
+========================================= */
+function renderAll(){
+  renderDashboard();
+  renderFilters();
+  renderEmployeeSelect();
+  renderList();
+}
+
+loadState();
+renderAll();
+</script>
+
+</body>
+</html>
