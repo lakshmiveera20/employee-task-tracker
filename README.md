@@ -43,6 +43,7 @@ The project is meant to be simple and focused on UI and basic JS functionality.
 Search works for both employee names and task titles.
 Filtering is based on task status (All, Pending, In Progress, Completed).
 
+live project link:- https://employeestasktracker.netlify.app/
 
 
 
